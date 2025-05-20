@@ -1,10 +1,12 @@
 import { initializeApp } from "@firebase/app";
 import { getFirestore } from "@firebase/firestore";
+import dotenv from "dotenv";
+dotenv.config();
 
 const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY,
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.FIREBASE_PROJECT_ID,
+  apiKey: process.env.API_KEY,
+  authDomain: process.env.AUTH_DOMAIN,
+  projectId: process.env.PROJECT_ID,
 };
 
 const app = initializeApp(firebaseConfig);
