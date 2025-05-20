@@ -15,7 +15,6 @@ export const authMiddleware: RequestHandler = async (req, res, next) => {
     (req as any).userId = decodedToken.uid;
     next();
   } catch (error) {
-    console.log(error);
     res.status(401).json({ message: "Token inválido" });
   }
 };

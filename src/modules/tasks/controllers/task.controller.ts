@@ -32,6 +32,7 @@ export class TaskController {
       const task = await this.taskService.create(taskData);
       res.status(201).json(task);
     } catch (error) {
+      console.log(error);
       res.status(400).json({ message: "Error al crear tarea" });
     }
   }

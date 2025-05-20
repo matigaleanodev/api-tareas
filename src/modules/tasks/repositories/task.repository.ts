@@ -1,29 +1,21 @@
 /* eslint-disable linebreak-style */
-import { db } from "../../../config/firebase";
-import { Task } from "../models/task.entity";
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  query,
-  where,
-} from "@firebase/firestore";
 
-const tasksCollection = collection(db, "tasks");
+import { db } from "../../../config/firebase-admin";
+import { Task } from "../models/task.entity";
 
 export class TaskRepository {
+  private readonly tasksCollection = db.collection("tasks");
+
   private sanitizeTask(task: Task): Omit<Task, "userId"> {
     const { userId, ...rest } = task;
     return rest;
   }
 
   async getAll(userId: string): Promise<Omit<Task, "userId">[]> {
-    const q = query(tasksCollection, where("userId", "==", userId));
-    const snapshot = await getDocs(q);
+    const snapshot = await this.tasksCollection
+      .where("userId", "==", userId)
+      .get();
+
     return snapshot.docs
       .map((docSnap) => ({
         id: docSnap.id,
@@ -37,10 +29,10 @@ export class TaskRepository {
     id: string,
     userId: string
   ): Promise<Omit<Task, "userId"> | null> {
-    const docRef = doc(tasksCollection, id);
-    const snapshot = await getDoc(docRef);
+    const docRef = this.tasksCollection.doc(id);
+    const snapshot = await docRef.get();
 
-    if (!snapshot.exists()) return null;
+    if (!snapshot.exists) return null;
 
     const task = {
       id: snapshot.id,
@@ -55,7 +47,8 @@ export class TaskRepository {
   async create(
     task: Omit<Task, "id" | "createdAt">
   ): Promise<Omit<Task, "userId"> | null> {
-    const docRef = await addDoc(tasksCollection, task);
+    const createdAt = new Date().toISOString();
+    const docRef = await this.tasksCollection.add({ ...task, createdAt });
     return this.getById(docRef.id, task.userId);
   }
 
@@ -67,8 +60,8 @@ export class TaskRepository {
     const existingTask = await this.getById(id, userId);
     if (!existingTask) return null;
 
-    const docRef = doc(tasksCollection, id);
-    await updateDoc(docRef, taskData);
+    const docRef = this.tasksCollection.doc(id);
+    await docRef.update(taskData);
 
     return this.getById(id, userId);
   }
@@ -80,8 +73,8 @@ export class TaskRepository {
     const taskToDelete = await this.getById(id, userId);
     if (!taskToDelete) return null;
 
-    const docRef = doc(tasksCollection, id);
-    await deleteDoc(docRef);
+    const docRef = this.tasksCollection.doc(id);
+    await docRef.delete();
 
     return taskToDelete;
   }
