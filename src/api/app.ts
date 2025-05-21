@@ -1,7 +1,7 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
 import { json } from "body-parser";
-import { Request, Response } from "express";
+
 import taskRouter from "../modules/tasks/router/task.routes";
 import userRouter from "../modules/users/router/user.routes";
 

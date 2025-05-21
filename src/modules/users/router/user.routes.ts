@@ -4,12 +4,9 @@ import { UserController } from "../controller/user.controller";
 const userRouter = Router();
 const userController = new UserController();
 
-userRouter.post("/auth", async (req, res, next) => {
-  try {
-    await userController.auth(req, res);
-  } catch (err) {
-    next(err);
-  }
-});
+userRouter.post("/auth", (req, res) => userController.auth(req, res));
+userRouter.post("/auth/confirm", (req, res) =>
+  userController.confirmUser(req, res)
+);
 
 export default userRouter;

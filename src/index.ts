@@ -1,8 +1,8 @@
-import { https } from "firebase-functions";
+import { onRequest } from "firebase-functions/https";
 import { apiTareas } from "./api/app";
 
-export const api = https.onRequest(apiTareas);
+export const api = onRequest(apiTareas);
 
-export const hello = https.onRequest((req, res) => {
+export const hello = onRequest((req, res) => {
   res.send("Hello World!");
 });

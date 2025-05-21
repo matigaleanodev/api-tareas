@@ -7,8 +7,8 @@ export class TaskRepository {
   private readonly tasksCollection = db.collection("tasks");
 
   private sanitizeTask(task: Task): Omit<Task, "userId"> {
-    const { userId, ...rest } = task;
-    return rest;
+    const { id, title, description, createdAt, completed } = task;
+    return { id, title, description, createdAt, completed };
   }
 
   async getAll(userId: string): Promise<Omit<Task, "userId">[]> {
@@ -49,7 +49,9 @@ export class TaskRepository {
   ): Promise<Omit<Task, "userId"> | null> {
     const createdAt = new Date().toISOString();
     const docRef = await this.tasksCollection.add({ ...task, createdAt });
-    return this.getById(docRef.id, task.userId);
+    const newTask = this.getById(docRef.id, task.userId);
+
+    return newTask;
   }
 
   async update(

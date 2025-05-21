@@ -1,27 +1,48 @@
 import { auth } from "../../../config/firebase-admin";
 
+interface FirebaseAuthError extends Error {
+  code?: string;
+}
+
 /**
- * Registra o logea un usuario con solo email, genera un custom token.
- * Servicio que maneja el registro y authenticacion de usuarios
+ * Servicio que maneja el registro y autenticación de usuarios.
  */
 export class UserService {
   /**
-   * Registra o logea un usuario con solo email, genera un custom token.
+   * Verifica si un usuario ya existe por email.
    * @param email Email del usuario
-   * @returns Token de autenticación Firebase Custom Token
+   * @returns Booleano si existe
    */
-  async loginOrRegister(email: string): Promise<string> {
-    let userRecord;
+  async userExists(email: string): Promise<boolean> {
     try {
-      userRecord = await auth.getUserByEmail(email);
+      await auth.getUserByEmail(email);
+      return true;
     } catch (error) {
-      if ((error as any).code === "auth/user-not-found") {
-        userRecord = await auth.createUser({ email });
-      } else {
-        throw error;
+      const err = error as FirebaseAuthError;
+      if (err.code === "auth/user-not-found") {
+        return false;
       }
+      throw error;
     }
-    const token = await auth.createCustomToken(userRecord.uid);
-    return token;
+  }
+
+  /**
+   * Logea un usuario existente generando un custom token.
+   * @param email Email del usuario
+   * @returns Token de autenticación
+   */
+  async login(email: string): Promise<string> {
+    const user = await auth.getUserByEmail(email);
+    return auth.createCustomToken(user.uid);
+  }
+
+  /**
+   * Crea un nuevo usuario y genera un custom token.
+   * @param email Email del nuevo usuario
+   * @returns Token de autenticación
+   */
+  async register(email: string): Promise<string> {
+    const user = await auth.createUser({ email });
+    return auth.createCustomToken(user.uid);
   }
 }
