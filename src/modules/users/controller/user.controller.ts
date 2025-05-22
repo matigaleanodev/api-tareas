@@ -19,7 +19,7 @@ export class UserController {
         res.json({ token });
       } else {
         res
-          .status(200)
+          .status(404)
           .json({ message: "Usuario no existe", needsConfirmation: true });
       }
     } catch (error) {
