@@ -6,10 +6,10 @@ API REST desarrollada con Express y Firebase que permite gestionar tareas por us
 
 Asegurate de tener instalado lo siguiente:
 
-[![Node.js](https://img.shields.io/badge/Node.js-v20.x-brightgreen)](https://nodejs.org/)
-[![Firebase CLI](https://img.shields.io/badge/Firebase%20CLI-v12.x-yellow)](https://firebase.google.com/docs/cli)
+[![Node.js](https://img.shields.io/badge/Node.js-v22.x-brightgreen)](https://nodejs.org/)
+[![Firebase CLI](https://img.shields.io/badge/Firebase%20CLI-v14.x-yellow)](https://firebase.google.com/docs/cli)
 [![Firestore](https://img.shields.io/badge/Firestore-Emulador%20o%20Producción-orange)](https://firebase.google.com/docs/firestore)
-[![Auth](https://img.shields.io/badge/Firebase%20Auth-Custom%20Token%20flow-blue)](https://firebase.google.com/docs/auth)
+[![Auth](https://img.shields.io/badge/Firebase%20Auth-Custom%20Token-blue)](https://firebase.google.com/docs/auth)
 
 Además, necesitas tener configurado previamente el archivo `firebase.json` y `.firebaserc` en el proyecto para poder hacer deploy.
 
