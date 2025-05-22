@@ -1,5 +1,9 @@
 import { Request, Response } from "express";
 import { TaskService } from "../services/task.service";
+import { CreateTaskDto } from "../dto/create-task.dto";
+import { UpdateTaskDto } from "../dto/update-task.dto";
+import { validate } from "class-validator";
+import { plainToInstance } from "class-transformer";
 
 export class TaskController {
   private taskService = new TaskService();
@@ -37,13 +41,20 @@ export class TaskController {
     if (!req.userId) {
       res.status(401).json({ message: "No autorizado" });
     } else {
-      try {
-        const taskData = { ...req.body, userId: req.userId };
-        const task = await this.taskService.create(taskData);
-        res.status(201).json(task);
-      } catch (error) {
-        console.log(error);
-        res.status(400).json({ message: "Error al crear tarea" });
+      const dto = plainToInstance(CreateTaskDto, req.body);
+      const errors = await validate(dto);
+
+      if (errors.length > 0) {
+        res.status(400).json({ message: "Datos inválidos", errors });
+      } else {
+        try {
+          const taskData = { ...dto, userId: req.userId, completed: false };
+          const task = await this.taskService.create(taskData);
+          res.status(201).json(task);
+        } catch (error) {
+          console.log(error);
+          res.status(400).json({ message: "Error al crear tarea" });
+        }
       }
     }
   }
@@ -52,14 +63,22 @@ export class TaskController {
     if (!req.userId) {
       res.status(401).json({ message: "No autorizado" });
     } else {
-      try {
-        const { id } = req.params;
-        const data = req.body;
-        const task = await this.taskService.update(id, req.userId, data);
-        res.json(task);
-      } catch (error) {
-        console.log(error);
-        res.status(404).json({ message: "Error al editar tarea" });
+      const dto = plainToInstance(UpdateTaskDto, {
+        ...req.body,
+        id: req.params.id,
+      });
+      const errors = await validate(dto);
+
+      if (errors.length > 0) {
+        res.status(400).json({ message: "Datos inválidos", errors });
+      } else {
+        try {
+          const task = await this.taskService.update(dto.id, req.userId, dto);
+          res.json(task);
+        } catch (error) {
+          console.log(error);
+          res.status(404).json({ message: "Error al editar tarea" });
+        }
       }
     }
   }
