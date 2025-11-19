@@ -16,7 +16,7 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "@firebase/firestore": "^4.9.0",
+    "@firebase/firestore": "^4.9.3",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "cors": "^2.8.5",
